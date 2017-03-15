@@ -1,0 +1,9 @@
+#!/bin/sh
+
+NOW=`date +%Y-%m-%d`
+BACKUP_NAME=${DB}_${NOW}.db
+DEST_NAME=/tmp/${BACKUP_NAME}
+pg_dump -h db -U postgres -Fc ${DB} > ${DEST_NAME}
+aws s3 cp ${DEST_NAME} ${S3_PREFIX}/${BACKUP_NAME}
+rm $DEST_NAME
+echo "Backup of ${BACKUP_NAME} to ${S3_PREFIX}/${BACKUP_NAME} complete" >> /var/log/cron.log 2>&1
